@@ -1,7 +1,11 @@
 require("dotenv").config();
-var fs= require('fs')
+var fs = require('fs')
 var keys = require("./keys.js");
-
+var axios = require("axios");
+var moment = require("moment");
+moment().format();
+var userCommand = process.argv[2];
+var userInput = process.argv[3];
 
 function Commands(userCommand, userInput) {
     var userCommand = process.argv[2];
@@ -9,7 +13,33 @@ function Commands(userCommand, userInput) {
 
     switch (userCommand) {
         case 'concert-this':
-            findConcert(userInput);
+                if (!userInput) {
+                    console.log("uh oh! You forgot to tell me who you want to see.")
+                } else{
+            axios
+                .get(
+                    "https://rest.bandsintown.com/artists/" +
+                    userInput +
+                    "/events?app_id=codingbootcamp"
+                )
+                .then(function (response) {
+                    console.log(`-------------------------------
+Okay, ${userInput} is playing some events:
+`)
+
+                    const concertArray = response.data;
+
+                    concertArray.forEach(function (response) {
+                        const formattedDate = moment(response.datetime).format(
+                            "MM/DD/YYYY"
+                        );
+                        console.log(`${response.venue.name}- 
+${response.venue.city}, ${response.venue.region}
+${formattedDate}
+`);
+                        });
+                    });
+                }
             break;
 
         case 'spotify-this-song':
@@ -25,9 +55,7 @@ function Commands(userCommand, userInput) {
             break;
     }
 }
-function findConcert() {
-    console.log("this will be bands in town")
-}
+
 function listenTo() {
     console.log("this will be spotify")
 }
@@ -37,4 +65,8 @@ function watch() {
 function simonSays() {
     console.log("bossy bossy")
 }
+
+
+
+
 Commands();
