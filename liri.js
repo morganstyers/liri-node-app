@@ -74,7 +74,7 @@ function listen(input) {
     console.log("Artist: " + (info[0].artists[0].name));
     console.log("Song: " + (info[0].name));
     console.log("Album: " + (info[0].album.name));
-    console.log("Preview: " + (info[3].preview_url))
+    console.log("Preview: " + '\n'+(info[3].preview_url))
     console.log('\n-----------------------------')
 
   })
