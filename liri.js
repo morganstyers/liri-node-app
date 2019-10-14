@@ -40,13 +40,15 @@ function watch(input) {
   var queryUrl = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy";
   axios.get(queryUrl).then(
     function (response) {
-
+     
       var movies = (response.data);
+      var plot=movies.Plot;
+    
       console.log("\n---------------------------------------------------\n");
       console.log("Title: " + movies.Title)
       console.log("Year: " + movies.Year)
       console.log("Starring: " + movies.Actors)
-      console.log("Plot: " + "\n" + movies.Plot)
+      console.log("\nPlot:" + '\v'+ plot.slice(0,107)+'\n'+plot.slice(107)+"\n");
       console.log("Language: " + movies.Country)
       console.log("IMDB Rating: " + movies.imdbRating)
       console.log("Rotten Tomatoes Gives It A: " + movies.Ratings[1].Value)
@@ -111,12 +113,15 @@ function random() {
     var it = doIt[1];
     var whatDo = doIt[0];
 
-    if(whatDo==='listen'){    listen(it)
+    if (whatDo === 'listen') {
+      listen(it)
     }
-    if (whatDo ==='go'){
-    go(input)}
-    if (whatDo==='watch'){
-    watch(input)}
+    if (whatDo === 'go') {
+      go(input)
+    }
+    if (whatDo === 'watch') {
+      watch(input)
+    }
   })
 }
 app();
