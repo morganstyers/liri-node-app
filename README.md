@@ -2,9 +2,8 @@
 
  Liri is a virtual helper bot in the style of Siri. This bot greets you upon startup and displays the commands to choose from. The user can then ask the bot generate search results for a specific movie, song or concert.
  
- ```see it in action:
- 
- https://github.com/morganstyers/liri-node-app/blob/master/imgs/liri.mov ```
+ ```see it in action:```
+  https://github.com/morganstyers/liri-node-app/blob/master/imgs/liri.mov 
  
  
 ### Programs Used
