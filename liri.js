@@ -4,113 +4,114 @@ var keys = require("./keys.js");
 var axios = require("axios");
 var moment = require("moment");
 var Spotify = require('node-spotify-api');
+
 var spotify = new Spotify(keys.spotify);
+var command = process.argv[2];
+var input = process.argv.slice(3).join(" ");
 
-var userCommand = process.argv[2];
-var term = process.argv.slice(3).join(" ");
-function Commands(userCommand, userInput) {
-    var userCommand = process.argv[2];
-    var userInput = process.argv[3];
+function app() {
+  switch (command) {
+    case 'go':
+      go(input);
+      break;
 
-    switch (userCommand) {
-        case 'concert-this':
-            if (!userInput) {
-                console.log("uh oh! You forgot to tell me who you want to see.")
-            } 
-             else{
-                 goTo(userInput);
-                }
-            break;
+    case 'listen':
+      listen(input);
+      break;
 
-        case 'spotify-this-song':
-                if(!userInput){
-                    userInput==="The-Sign"
-                }else{
-            listenTo(userInput);}
-            break;
-        default:
+    case 'watch':
+      watch(input);
+      break;
 
-        case 'movie-this':
-            watch(userInput)
-            break;
+    case 'do-this':
+      random();
+      break;
 
-        case 'do-what-it-says':
-            simonSays(userInput)
-            break;
-    }
+    default:
+      console.log("Hello! I'm Liri.Type any of the following commands:\ngo \nlisten \nwatch \ndo-this");
+      break;
+  }
 }
 
-function goTo(userInput) {
-    axios
-        .get(
-            "https://rest.bandsintown.com/artists/" +
-            userInput +
-            "/events?app_id=codingbootcamp"
-        )
-        .then(function (response) {
-            console.log(`-------------------------------
-Okay, ${userInput} is playing some events:
+function watch(input) {
+  if (!input) {
+    input = "Mr. Nobody";
+  }
+  var queryUrl = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy";
+  axios.get(queryUrl).then(
+    function (response) {
+
+      var movies = (response.data);
+      console.log("\n---------------------------------------------------\n");
+      console.log("Title: " + movies.Title)
+      console.log("Year: " + movies.Year)
+      console.log("Starring: " + movies.Actors)
+      console.log("Plot: " + "\n" + movies.Plot)
+      console.log("Language: " + movies.Country)
+      console.log("IMDB Rating: " + movies.imdbRating)
+      console.log("Rotten Tomatoes Gives It A: " + movies.Ratings[1].Value)
+      console.log("\n---------------------------------------------------\n");
+    })
+}
+
+function listen(input) {
+  if (!input) {
+    input = "The Sign Ace Of Base";
+  }
+  spotify.search({
+    type: 'track',
+    query: input,
+  }, (function (error, response) {
+    var info = response.tracks.items;
+
+    if (error) {
+      console.log("ERROR OCCURRED" + error);
+      return;
+    }
+    console.log('\n-----------------------------')
+    console.log("Artist: " + (info[0].artists[0].name));
+    console.log("Song: " + (info[0].name));
+    console.log("Album: " + (info[0].album.name));
+    console.log("Preview: " + (info[3].preview_url))
+
+  })
+  )
+}
+function go(input) {
+  if (!input) {
+    input = "Fleetwood Mac"
+  }
+  axios
+    .get(
+      "https://rest.bandsintown.com/artists/" +
+      input +
+      "/events?app_id=codingbootcamp"
+    )
+    .then(function (response) {
+      console.log(`-------------------------------
+Okay, ${input} is playing some events:
 `)
-            const concertArray = response.data;
-            concertArray.forEach(function (response) {
-                const formattedDate = moment(response.datetime).format(
-                    "MM/DD/YYYY"
-                );
-                console.log(`${response.venue.name}- 
+      const concertArray = response.data;
+      concertArray.forEach(function (response) {
+        const formattedDate = moment(response.datetime).format(
+          "MM/DD/YYYY"
+        );
+        console.log(`${response.venue.name}- 
 ${response.venue.city}, ${response.venue.region}
 ${formattedDate}
 `);
-            })
-        })
+      })
+    })
 }
-function listenTo(userInput) {
-    spotify
-    spotify.search({type: 'track' , query: userInput, limit: 5})
-    .then(function(response) {
-    var info=response.tracks.items;
+function random() {
+  fs.readFile('random.txt', 'utf8', function (err, data) {
+    if (err) throw err;
+    var doIt = data.split(",");
+    var it = doIt[1];
 
-    for (var i = 0; i < info.length; i++) {
-     
-        console.log("artist(s): " + (info[i].artists));
-        console.log("song name: " + info[i].name);
-        console.log("preview song: " + info[i].preview_url);
-        console.log("album: " + info[i].album.name);
-        console.log("-----------------------------------");
-    }})
-    .catch(function(err) {
-      console.error('Error occurred: ' + err); 
-    });
+    go(input)
+    listen(it)
+    watch(input)
+  })
 }
-function watch(userInput) {
-    var URL=("http://www.omdbapi.com/?q="+ userInput +"&y=&plot=short&apikey=trilogy")
-    axios.get(URL)
-.then(function(response){
-var movie=response.data;
-movieData=`
-movie title: ${movie.title}`;
-console.log(movie)
-})
-
-}
-function simonSays() {
-    console.log("bossy bossy")
-
-    fs.readFile('random.txt', (err, data) => {
-        if (err) throw err;
-        console.log(data);
-      
-
-        var dataArr = data;
-
-        if (dataArr.length === 2) {
-            options(dataArr[0], dataArr[1]);
-        } else if (dataArr.length === 1) {
-            options(dataArr[0]);
-        }
-    });
-};
-      
-
-      
-
-Commands();
+app();
