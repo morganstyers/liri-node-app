@@ -73,6 +73,7 @@ function listen(input) {
     console.log("Song: " + (info[0].name));
     console.log("Album: " + (info[0].album.name));
     console.log("Preview: " + (info[3].preview_url))
+    console.log('\n-----------------------------')
 
   })
   )
@@ -108,10 +109,14 @@ function random() {
     if (err) throw err;
     var doIt = data.split(",");
     var it = doIt[1];
+    var whatDo = doIt[0];
 
-    go(input)
-    listen(it)
-    watch(input)
+    if(whatDo==='listen'){    listen(it)
+    }
+    if (whatDo ==='go'){
+    go(input)}
+    if (whatDo==='watch'){
+    watch(input)}
   })
 }
 app();
